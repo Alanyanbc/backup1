@@ -450,11 +450,12 @@ public class WritePadDialog extends Dialog {
 				areaToRefresh.union((int) x, (int) y, (int) x, (int) y);*/
 				return areaToRefresh;
 			}
-			try{
+			
 			 final int N = event.getHistorySize();
              final int P = event.getPointerCount();
              Log.i("mark", "history size"+ N+"pointer count" + P);
-             for (int i = 0; i < N; i++) {
+             try{
+            	 for (int i = 0; i < N; i++) {
                  for (int j = 0; j < P; j++) {
                 	prPressure = pressure;
          			pressure = event.getHistoricalPressure(j, i);
@@ -470,19 +471,25 @@ public class WritePadDialog extends Dialog {
                    areaToRefresh = Beziercurve(mX, mY, event.getHistoricalX(j, i), event.getHistoricalY(j, i) );
                  }
              }
+			}
+			catch( Exception e)
+			{
+				e.printStackTrace();
+			}
+             try{
              for (int j = 0; j < P; j++) {
             		prPressure = pressure;
-         			pressure = event.getHistoricalPressure(j);
+         			pressure = event.getPressure(j);
             	  Log.i("witerpad", "getToolType = "+ event.getToolType(j)
-                          +",getHistoricalX = "+event.getHistoricalX(j)
-                          +",getHistoricalY ="+event.getHistoricalY(j)
-                          +",getHistoricalPressure="+event.getHistoricalPressure(j)
-                          +",getHistoricalTouchMajor"+event.getHistoricalTouchMajor(j)
-                          +",getHistoricalTouchMinor"+event.getHistoricalTouchMinor(j)
-                          +"getHistoricalOrientation"+event.getHistoricalOrientation(j)
-                          +",getHistoricalAxisValue"+event.getHistoricalAxisValue(MotionEvent.AXIS_DISTANCE, j)
-                          +",getHistoricalAxisValue"+event.getHistoricalAxisValue(MotionEvent.AXIS_TILT, j) );
-            	  areaToRefresh = Beziercurve(mX, mY, event.getHistoricalX(j), event.getHistoricalY(j) );
+                          +",getX = "+event.getX(j)
+                          +",getY ="+event.getY(j)
+                          +",getPressure="+event.getPressure(j)
+                          +",getTouchMajor"+event.getTouchMajor(j)
+                          +",getTouchMinor"+event.getTouchMinor(j)
+                          +"getOrientation"+event.getOrientation(j)
+                          +",getAxisValue"+event.getAxisValue(MotionEvent.AXIS_DISTANCE, j)
+                          +",getAxisValue"+event.getAxisValue(MotionEvent.AXIS_TILT, j) );
+            	  areaToRefresh = Beziercurve(mX, mY, event.getX(j), event.getY(j) );
              }
 			}
 			catch ( Exception e)
@@ -579,16 +586,16 @@ public class WritePadDialog extends Dialog {
 			final float dx = Math.abs(currX - previousX);
 			final float dy = Math.abs(currY - previousY);
 
-			if ( dx >= 3 || dy >= 3 ) {
+			if ( dx >= 1 || dy >= 1 ) {
 				/*areaToRefresh = mInvalidRect;
 				areaToRefresh.set((int) mCurveEndX, (int) mCurveEndY,
 						(int) mCurveEndX, (int) mCurveEndY);*/
-				if( index >= COLORS.length )
+				/*if( index >= COLORS.length )
 				{
 					index = 0;
 				}
 				paint.setColor(COLORS[index]);
-				index++;
+				index++;*/
 				paint.setAlpha(Math.min((int)(pressure * 255), 255));
 				// 设置贝塞尔曲线的操作点为起点和终点的一半
 				float cX = mCurveEndX = (currX + previousX) / 2;
